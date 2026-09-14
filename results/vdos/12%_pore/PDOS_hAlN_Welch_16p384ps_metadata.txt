@@ -1,0 +1,25 @@
+MD-derived VDOS/PDOS metadata
+================================
+dump_file: pdos.lammpstrj
+natoms_dump: 4112
+selected_atoms: 4112
+mass_weighted: True
+primitive_atoms: 2
+timestep_fs: 0.5
+dump_interval_steps: 1
+stride: 2
+effective_dt_fs: 1
+nyquist_THz: 500
+block_len_frames: 4096
+block_duration_ps: 4.096
+frequency_spacing_THz: 0.244140625
+processed_blocks: 24
+used_frames: 100001
+skipped_final_partial_frames: 1697
+smooth_sigma_THz: 0.38
+raw_additivity_error: 0.000000000000e+00
+smoothed_additivity_error: 1.110223024625e-16
+
+Atom type summary:
+type 1: label=Al, total=2112, selected=2112, sampling_factor=1
+type 2: label=N, total=2000, selected=2000, sampling_factor=1

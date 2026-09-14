@@ -1,0 +1,38 @@
+MD-derived VDOS/PDOS metadata
+================================
+dump_file: pdos.lammpstrj
+natoms_dump: 4208
+selected_atoms: 4208
+mass_weighted: True
+primitive_atoms: 2
+timestep_fs: 0.5
+dump_interval_steps: 1
+stride: 2
+effective_dt_fs: 1
+nyquist_THz: 500
+block_len_frames: 16384
+block_duration_ps: 16.384
+frequency_spacing_THz: 0.06103515625
+processed_blocks: 6
+used_frames: 100001
+skipped_final_partial_frames: 1697
+smooth_sigma_THz: 0.38
+raw_species_additivity_error: 8.881784197001e-16
+smoothed_species_additivity_error: 1.665334536938e-16
+raw_directional_additivity_error: 0.000000000000e+00
+smoothed_directional_additivity_error: 5.551115123126e-17
+
+Directional definition:
+x: Cartesian x velocity component vx; interpret as armchair/strain only if aligned with x
+y: Cartesian y velocity component vy; interpret as in-plane transverse only if aligned with y
+z: Cartesian z velocity component vz; out-of-plane
+total: x + y + z at every frequency
+directional components use one common 3N normalization; they are not normalized separately
+integral_Gx_smoothed: 1.9963048743
+integral_Gy_smoothed: 2.00439670456
+integral_Gz_smoothed: 1.99929842114
+integral_Gtotal_target: 6
+
+Atom type summary:
+type 1: label=Al, total=2112, selected=2112, sampling_factor=1
+type 2: label=N, total=2096, selected=2096, sampling_factor=1
