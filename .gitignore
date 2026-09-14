@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Microsoft Office temporary files
+~$*.xlsx
+~$*.docx
+
+# Large transient LAMMPS/MD outputs not intentionally versioned
+log.lammps
+log.*.lammps
+dump.*
+*.lammpstrj
+profile.langevin
+restart.*
+
+# Local analysis scratch
+scratch/
+_tmp/

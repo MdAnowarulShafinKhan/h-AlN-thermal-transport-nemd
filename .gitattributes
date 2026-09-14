@@ -1,0 +1,10 @@
+*.py text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.dat text eol=lf
+*.lmp text eol=lf
+*.tersoff text eol=lf
+*.csv text eol=lf
+*.cff text eol=lf
+*.xlsx binary
+*.png binary
