@@ -1,0 +1,156 @@
+echo            both
+units           metal
+dimension       3
+atom_style      atomic
+neighbor        5.0 bin
+neigh_modify    delay 0 every 1 check yes one 10000 page 100000    
+
+#2 structure
+
+boundary        p p p
+read_data       AlN_paper_like.lmp
+
+
+replicate       8 11 1
+
+write_data      AlN.lmp
+
+#3 potentials
+
+pair_style      tersoff
+pair_coeff      * * XN.tersoff     Al N
+
+timestep        0.0005  # 0.5 fs timestep
+
+# Define the regions for heat source and sinks
+
+region       hot block INF INF 4 19.84230685 INF INF units box  
+region       cold block INF INF 305.00383015 320.846137 INF INF units box 
+
+##region for fixed end
+
+region          A1 block INF INF INF 4 INF INF units box
+region          A2 block INF INF 320.846137 INF INF INF units box
+region          gFixed union 2 A1 A2
+
+group            hot region hot
+group            cold region cold
+group            A1 region A1 
+group            A2 region A2
+group            gFixed region gFixed
+group            gMobile subtract all gFixed
+
+##Applying spring force to make the ends fixed
+
+velocity         gFixed set 0.0 0.0 0.0
+fix              fixEnds gFixed setforce 0.0 0.0 0.0
+
+#4 optimize at 0 K
+
+dump            1 all custom 50000 dump.minimization id type x y z
+fix		        1 all box/relax x 0.0 y 0.0
+min_style       cg
+minimize        0.0 1.0e-8 1000000 1000000
+undump          1
+unfix			1
+
+
+
+#5 optimize at 300K
+
+compute         peratom all pe/atom
+reset_timestep  0
+timestep        0.0005
+
+velocity        gMobile create 300 87215 rot yes mom yes dist gaussian
+
+fix             3 gMobile npt temp 300 300 0.05 iso 0.0 0.0 0.5                        #x 0.0 0.0 0.5 y 0.0 0.0 0.5 
+thermo          1000
+thermo_style    custom step temp  lx ly lz pxx pyy pzz etotal
+run             3000000
+unfix           3
+
+fix             4 gMobile nvt temp 300 300 0.05
+thermo          1000
+thermo_style    custom step temp  lx ly lz pxx pyy pzz etotal
+run             1000000
+unfix           4
+
+# Switch to NVE ensemble for 500 ps
+
+change_box      all boundary p p f remap
+
+fix             5 gMobile nve
+run             1000000
+
+# Apply NEMD with Langevin thermostat to heat source and sinks
+# Set temperatures for heat source and sinks (heat source at 315K, sinks at 285K)
+#computation
+
+variable       kB        equal 0.00008617
+variable       t         equal 300
+variable       tlo       equal 285
+variable       thi       equal 315
+variable       tdamp     equal 0.05
+
+compute        THSource  hot  temp
+compute        THsink    cold  temp
+
+timestep       0.0005	
+
+# 2nd equilibration run
+# Keep the rest of the system in NVE (to conserve energy)
+
+fix             hot hot langevin ${thi} ${thi} ${tdamp} 74561 tally yes zero yes 
+fix             cold cold langevin ${tlo} ${tlo} ${tdamp} 14578 tally yes zero yes 
+fix_modify      hot temp THSource
+fix_modify      cold temp THsink
+
+variable        tdiff equal c_THSource-c_THsink
+variable Time    equal step
+variable EL      equal f_hot
+variable ER      equal f_cold
+
+thermo_style    custom step temp c_THSource c_THsink f_hot f_cold v_tdiff 
+thermo_modify   colname c_THSource Temp_hot colname c_THsink Temp_cold &
+                colname f_hot E_hot colname f_cold E_cold &
+                colname v_tdiff dTemp_step  
+
+thermo          1000
+run             2000000
+
+#3rd stage (NEMD)
+
+reset_timestep  0
+
+unfix           hot
+unfix           cold
+
+compute         ke all ke/atom
+variable        temp atom c_ke/(1.5*${kB})
+
+fix             hot hot langevin ${thi} ${thi} ${tdamp} 12345 tally yes zero yes 
+fix             cold cold langevin ${tlo} ${tlo} ${tdamp} 54321 tally yes zero yes
+fix_modify      hot temp THSource
+fix_modify      cold temp THsink
+
+fix             ave gMobile ave/time 10 100 1000 v_tdiff ave running  
+thermo_style    custom step temp c_THSource c_THsink f_hot f_cold v_tdiff f_ave
+thermo_modify   colname c_THSource Temp_hot colname c_THsink Temp_cold &
+                colname f_hot E_hot colname f_cold E_cold &
+                colname v_tdiff dTemp_step colname f_ave dTemp
+				
+compute         layers gMobile chunk/atom bin/1d y lower 0.01 units reduced   
+fix             temp_profile gMobile ave/chunk 10 100 1000 layers v_temp file profile.langevin 
+fix 			E_out gMobile print 1000 "${Time}  ${EL}  ${ER}" file Ener_equ.dat title "Time  E_hot  E_cold" screen no
+
+dump            1 all custom 50000 dump.optimize id type x y z c_peratom fx fy fz vx vy vz
+
+#variable        start_time equal time
+#variable        lx equal 316.846137
+#variable        ly equal 119.80058
+#variable        lz equal 3.4
+                 
+run             16000000   # 8 ns for data collection
+
+# kappa      = 83.312 W·m⁻¹·K⁻¹

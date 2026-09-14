@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite the associated publication when available; until then, cite this dataset/software repository."
+title: "Molecular-dynamics data and analysis for thermal transport in monolayer h-AlN"
+type: dataset
+authors:
+  - family-names: "Khan"
+    given-names: "Md. Anowarul Shafin"
+version: 1.0.0
+date-released: 2026-09-14
+keywords:
+  - aluminum nitride
+  - h-AlN
+  - molecular dynamics
+  - thermal conductivity
+  - NEMD
+  - VDOS
+  - PDOS
+  - strain
+  - porosity
+  - doping
