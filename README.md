@@ -98,4 +98,4 @@ GitHub can read the included `CITATION.cff`. Update the author list and replace 
 
 ## License
 
-No license has been selected automatically. See `LICENSE_NOTICE.md` before making the repository public.
+No open-source or open-data license has yet been assigned. See LICENSE_NOTICE.md for the current licensing status.
