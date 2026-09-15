@@ -98,7 +98,5 @@ GitHub can read the included `CITATION.cff`. Update the author list and replace 
 
 ## License
 
-## License
-
 No open-source or open-data license has yet been assigned. See
 `LICENSE_NOTICE.md` for the current licensing status.
